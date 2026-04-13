@@ -12,8 +12,8 @@ def goruntuOku(dosyaYolu):
 
 
 
-def goruntuGoster(image):
-    cv2.imshow("Goruntu", image)
+def goruntuGoster(image, pencereAdi="Goruntu"):
+    cv2.imshow(pencereAdi, image)
     #  ekrana pencere açar ve resmi koyar
     cv2.waitKey(0)
     #  klavyeden input bekler 0 sonsuz demek

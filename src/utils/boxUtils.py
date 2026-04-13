@@ -29,3 +29,35 @@ def iouHesapla(box1, box2):
         return 0
 
     return kesisimAlani / birlesimAlani
+
+
+# burası her kareyi çizmeyelim diye kıyas yapmak için nms üzerinden kıyas yapıyoruz iou su az olanları alıyoruz
+
+def nmsUygula(detections, iouThreshold=0.5):
+    detections = sorted(detections, key=lambda detection: detection[5], reverse=True)
+    # burası da key lambda mevzusu sıralama yapmak içn neye göre sıralma olucağı
+    # confidence a göre sort ettik
+    
+    secilenler = []
+
+    while detections:
+        enIyi = detections.pop(0)
+        secilenler.append(enIyi)
+
+        kalanlar = []
+
+        for detection in detections:
+            box1 = enIyi[:4]
+            box2 = detection[:4]
+
+            iou = iouHesapla(box1, box2)
+
+            # eşik değerinin üstündeyse o kutuları çizmiyoruz aynı kutular
+            if iou < iouThreshold:
+                kalanlar.append(detection)
+
+        
+        detections = kalanlar
+
+    
+    return secilenler
