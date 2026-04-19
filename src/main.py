@@ -2,6 +2,7 @@ from utils.imageUtils import goruntuOku, goruntuGoster
 from utils.drawUtils import kutuCiz
 from utils.boxUtils import iouHesapla
 from utils.boxUtils import nmsUygula
+from detectionPipeline import sahteDetectionUret, nmsUygulaWrapper, detectionCiz
 
 image = goruntuOku("indir.jpg")
 
@@ -51,27 +52,41 @@ image = goruntuOku("indir.jpg")
 #     print(detection)
 
 
+# if image is not None:
+#     detections = [
+#         (100, 100, 200, 150, "Arac", 0.92),
+#         (110, 110, 195, 145, "Arac", 0.88),
+#         (350, 120, 120, 180, "Insan", 0.81),
+#         (500, 300, 180, 120, "Arac", 0.76)
+#     ]
+
+#     nmsOncesiImage = image.copy()
+
+#     for x, y, w, h, label, confidence in detections:
+#         nmsOncesiImage = kutuCiz(nmsOncesiImage, x, y, w, h, label, confidence)
+
+
+#     goruntuGoster(nmsOncesiImage, "NMS Oncesi")
+
+#     secilenDetections = nmsUygula(detections, iouThreshold=0.5)
+
+#     nmsSonrasıImage = image.copy()
+
+#     for x, y, w, h, label, confidence in secilenDetections:
+#         nmsSonrasıImage = kutuCiz(nmsSonrasıImage, x, y, w, h, label, confidence)
+
+#     goruntuGoster(nmsSonrasıImage, "NMS Sonrasi")  
+
+
+# burası daha temiz hali 
+
 if image is not None:
-    detections = [
-        (100, 100, 200, 150, "Arac", 0.92),
-        (110, 110, 195, 145, "Arac", 0.88),
-        (350, 120, 120, 180, "Insan", 0.81),
-        (500, 300, 180, 120, "Arac", 0.76)
-    ]
+    detections = sahteDetectionUret()
 
-    nmsOncesiImage = image.copy()
+    nmsOncesi = detectionCiz(image.copy(), detections)
+    goruntuGoster(nmsOncesi, "NMS oncesi")
 
-    for x, y, w, h, label, confidence in detections:
-        nmsOncesiImage = kutuCiz(nmsOncesiImage, x, y, w, h, label, confidence)
+    temizDetections = nmsUygulaWrapper(detections)
 
-
-    goruntuGoster(nmsOncesiImage, "NMS Oncesi")
-
-    secilenDetections = nmsUygula(detections, iouThreshold=0.5)
-
-    nmsSonrasıImage = image.copy()
-
-    for x, y, w, h, label, confidence in secilenDetections:
-        nmsSonrasıImage = kutuCiz(nmsSonrasıImage, x, y, w, h, label, confidence)
-
-    goruntuGoster(nmsSonrasıImage, "NMS Sonrasi")  
+    nmsSonrasi = detectionCiz(image.copy(), temizDetections)
+    goruntuGoster(nmsSonrasi, "NMS sonrasi")
