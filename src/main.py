@@ -2,9 +2,12 @@ from utils.imageUtils import goruntuOku, goruntuGoster
 from utils.drawUtils import kutuCiz
 from utils.boxUtils import iouHesapla
 from utils.boxUtils import nmsUygula
-from detectionPipeline import sahteDetectionUret, nmsUygulaWrapper, detectionCiz
+from detectionPipeline import nmsUygulaWrapper, detectionCiz
+from detectionPipeline import yoloDetectionUret
+from utils.annotationUtils import yoloToPixelBox, yoloAnnotationOku
+from utils.annotationUtils import labelPathBul
 
-image = goruntuOku("indir.jpg")
+# image = goruntuOku("deneme1-1.jpg")
 
 # if image is not None:
 #     # x = 100
@@ -80,13 +83,86 @@ image = goruntuOku("indir.jpg")
 
 # burası daha temiz hali 
 
+# if image is not None:
+#     detections = yoloDetectionUret(image)
+
+#     nmsOncesi = detectionCiz(image.copy(), detections)
+#     goruntuGoster(nmsOncesi, "NMS oncesi")
+
+#     temizDetections = nmsUygulaWrapper(detections)
+
+#     nmsSonrasi = detectionCiz(image.copy(), temizDetections)
+#     goruntuGoster(nmsSonrasi, "NMS sonrasi")
+
+    # yolo tabanlı computer vision modellerini kullanmak için
+    # pip install ultralytics
+
+
+#  yolo ya çevirmeyi test ediyoruz burda
+
+# x, y, w, h = yoloToPixelBox(
+#     xCenter=0.5,
+#     yCenter=0.4,
+#     width=0.2,
+#     height=0.1,
+#     imageWidth=1000,
+#     imageHeight=800
+# )
+
+# print(x, y, w, h)
+
+# className = {
+#     0: "arac",
+#     1: "insan"
+# }
+
+# if image is not None:
+#     imageHeight, imageWidth = image.shape[:2]
+
+#     annotations = yoloAnnotationOku("indir.txt")
+
+#     for classId, xCenter, yCenter, width, height in annotations:
+#         x, y, w, h = yoloToPixelBox(
+#             xCenter,
+#             yCenter,
+#             width,
+#             height,
+#             imageWidth,
+#             imageHeight
+#         )
+
+#         label = className.get(classId, "Bilinmeyen")
+#         image = kutuCiz(image, x, y, w, h, label, 1.00)
+
+#     goruntuGoster(image)
+
+
+classNames = {
+    0: "araba",
+    1: "insan"
+}
+
+imagePath = "datasets/images/indir.jpg"
+labelPath = labelPathBul(imagePath)
+
+image = goruntuOku(imagePath)
+
 if image is not None:
-    detections = sahteDetectionUret()
+    imageHeight, imageWidth = image.shape[:2]
 
-    nmsOncesi = detectionCiz(image.copy(), detections)
-    goruntuGoster(nmsOncesi, "NMS oncesi")
+    annotations = yoloAnnotationOku(labelPath)
 
-    temizDetections = nmsUygulaWrapper(detections)
+    for classId, xCenter, yCenter, width, height in annotations:
+        x, y, w, h = yoloToPixelBox(
+            xCenter,
+            yCenter,
+            width,
+            height,
+            imageWidth,
+            imageHeight
+        )
 
-    nmsSonrasi = detectionCiz(image.copy(), temizDetections)
-    goruntuGoster(nmsSonrasi, "NMS sonrasi")
+        label = classNames.get(classId, "bilinmeyen")
+        image = kutuCiz(image, x, y, w, h, label, 1.00)
+
+    goruntuGoster(image)
