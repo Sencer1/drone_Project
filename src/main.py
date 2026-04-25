@@ -1,4 +1,4 @@
-from utils.imageUtils import goruntuOku, goruntuGoster
+from utils.imageUtils import goruntuOku, goruntuGoster, goruntuKaydet
 from utils.drawUtils import kutuCiz
 from utils.boxUtils import iouHesapla
 from utils.boxUtils import nmsUygula
@@ -6,6 +6,9 @@ from detectionPipeline import nmsUygulaWrapper, detectionCiz
 from detectionPipeline import yoloDetectionUret
 from utils.annotationUtils import yoloToPixelBox, yoloAnnotationOku
 from utils.annotationUtils import labelPathBul
+from utils.annotationUtils import imageDosyalariGetir
+import os
+
 
 # image = goruntuOku("deneme1-1.jpg")
 
@@ -137,32 +140,93 @@ from utils.annotationUtils import labelPathBul
 #     goruntuGoster(image)
 
 
-classNames = {
-    0: "araba",
-    1: "insan"
-}
+# classNames = {
+#     0: "araba",
+#     1: "insan"
+# }
 
-imagePath = "datasets/images/indir.jpg"
-labelPath = labelPathBul(imagePath)
+# imagePaths = imageDosyalariGetir("dataset/images/train")
 
-image = goruntuOku(imagePath)
+# for imagePath in imagePaths:
+#     labelPath = labelPathBul(imagePath)
 
-if image is not None:
-    imageHeight, imageWidth = image.shape[:2]
+#     image = goruntuOku(imagePath)
 
-    annotations = yoloAnnotationOku(labelPath)
+#     if image is None:
+#         continue
 
-    for classId, xCenter, yCenter, width, height in annotations:
-        x, y, w, h = yoloToPixelBox(
-            xCenter,
-            yCenter,
-            width,
-            height,
-            imageWidth,
-            imageHeight
-        )
+#     imageHeight, imageWidth = image.shape[:2]
 
-        label = classNames.get(classId, "bilinmeyen")
-        image = kutuCiz(image, x, y, w, h, label, 1.00)
+#     annotations = yoloAnnotationOku(labelPath)
 
-    goruntuGoster(image)
+#     for classId, xCenter, yCenter, width, height in annotations:
+#         x, y, w, h = yoloToPixelBox(
+#             xCenter,
+#             yCenter,
+#             width,
+#             height,
+#             imageWidth,
+#             imageHeight
+#         )
+
+#         label = classNames.get(classId, "Bilinmeyen")
+#         image = kutuCiz(image, x, y, w, h, label, 1.00)
+
+#     goruntuGoster(image, imagePath)
+
+
+    # yolo detect train model=yolov8n.pt data=data.yaml epochs=5 bunla direkt eğitime başlıyoruz
+    # clı command line interface i var ultralytics / yolo framework için
+
+
+# şimdi eğitilmiş modeli denicem
+
+# image = goruntuOku("dataset/images/val/0000001_05499_d_0000010.jpg")
+
+# if image is not None:
+#     detections = yoloDetectionUret(image)
+
+#     image = detectionCiz(image, detections)
+
+#     goruntuGoster(image, "Fine-tuned YOLO Detection")
+
+
+# şimdi burda birden fazla val içinde kontolr edicez sonra da bunları output içine kaydedicez
+
+# imagePaths = imageDosyalariGetir("dataset/images/val")
+
+# for imagePath in imagePaths[:10]:
+#     image = goruntuOku(imagePath)
+
+#     if image is None:
+#         continue
+
+#     detections = yoloDetectionUret(image)
+#     image = detectionCiz(image, detections)
+
+#     goruntuGoster(image)
+
+
+# output a kaydetme kısmı burası
+
+outputFolder = "outputs"
+# exist_ok=True klasor varsa hata verme devam
+os.makedirs(outputFolder, exist_ok=True)
+
+imagePaths = imageDosyalariGetir("dataset/images/val")
+
+for imagePath in imagePaths[40:50]:
+    image = goruntuOku(imagePath)
+
+    if image is None:
+        continue
+
+    detections = yoloDetectionUret(image)
+    image = detectionCiz(image, detections)
+    # burası en sağdaki adı alır resim.jpg gibi
+    fileName = os.path.basename(imagePath)
+    savePath = os.path.join(outputFolder, fileName)
+
+    goruntuKaydet(image, savePath)
+
+print("Tahmin sonuclari outputs klasorune kaydedildi.")

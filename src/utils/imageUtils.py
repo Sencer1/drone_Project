@@ -20,3 +20,7 @@ def goruntuGoster(image, pencereAdi="Goruntu"):
     #  tuşa basana kadar pencere açık
     cv2.destroyAllWindows()
     #  opencv nin açtığı tüm pencereleri kapatır 
+
+
+def goruntuKaydet(image, savePath):
+    cv2.imwrite(savePath, image)

@@ -2,7 +2,7 @@ from utils.drawUtils import kutuCiz
 from utils.boxUtils import nmsUygula
 from ultralytics import YOLO
 
-model = YOLO("yolov8n.pt")
+model = YOLO("runs/detect/train-2/weights/best.pt")
 
 # def sahteDetectionUret():
 #     return [

@@ -42,12 +42,33 @@ def yoloAnnotationOku(labelPath):
 #  burası image e karşılık gelen dosya adını bulmka için
 
 def labelPathBul(imagePath):
-    # tam yolun sadece dosya adını vermek için burası
-    dosyaAdi = os.path.basename(imagePath)
-    # dosya adını iki parçaya bölmek için
-    # _ buraya .jpg atadık ama onu kullanmıcaz
-    kokAd, _ = os.path.splitext(dosyaAdi)
-    # sonra da label yolunu oluşturuyoruz
-    labelPath = os.path.join("datasets", "labels", kokAd + ".txt")
+    # # tam yolun sadece dosya adını vermek için burası
+    # dosyaAdi = os.path.basename(imagePath)
+    # # dosya adını iki parçaya bölmek için
+    # # _ buraya .jpg atadık ama onu kullanmıcaz
+    # kokAd, _ = os.path.splitext(dosyaAdi)
+    # # sonra da label yolunu oluşturuyoruz
+    # labelPath = os.path.join("dataset", "labels", kokAd + ".txt")
+
+    labelPath = imagePath.replace("images", "labels")
+    # stringi sağ baştan başlayarak böler rsplit
+    # dasdafa/asfafa/image.jpg yi [apfkapfap/aıfıafmwa/iamge, jpg] şeklinde ayırdı 1 kez
+    # [0] ile de ilk kısmı alıp sonuna txt ekledik
+    labelPath = labelPath.rsplit(".",1)[0] + ".txt"
 
     return labelPath
+
+
+
+
+def imageDosyalariGetir(imagesFolder):
+    dosyalar = []
+    # verilen klasördeki dosya isimlerini döndürür os.listdir
+    for dosyaAdi in os.listdir(imagesFolder):
+        # string in sonunu kontrol ediyor
+        if dosyaAdi.endswith(".jpg") or dosyaAdi.endswith(".png"):
+            # dosydakiler ie isimleri birleştiriyor
+            tamYol = os.path.join(imagesFolder, dosyaAdi)
+            dosyalar.append(tamYol)
+
+    return sorted(dosyalar)
