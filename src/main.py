@@ -8,8 +8,11 @@ from utils.annotationUtils import yoloToPixelBox, yoloAnnotationOku
 from utils.annotationUtils import labelPathBul
 from utils.annotationUtils import imageDosyalariGetir
 import os
+from realTimeDetection import kameraIleRealTimeDetection
+from videoDetection import videoIleDetection
 
 
+# ---------------------------------------------------------------------------------------------
 # image = goruntuOku("deneme1-1.jpg")
 
 # if image is not None:
@@ -31,7 +34,7 @@ import os
 #     goruntuGoster(image)
 
     
-
+# ---------------------------------------------------------------------------------------------
 # box1 = (100, 100, 200, 150)
 # box2 = (110, 110, 195, 145)
 
@@ -57,7 +60,7 @@ import os
 # for detection in sonuc:
 #     print(detection)
 
-
+# ---------------------------------------------------------------------------------------------
 # if image is not None:
 #     detections = [
 #         (100, 100, 200, 150, "Arac", 0.92),
@@ -85,7 +88,7 @@ import os
 
 
 # burası daha temiz hali 
-
+# ---------------------------------------------------------------------------------------------
 # if image is not None:
 #     detections = yoloDetectionUret(image)
 
@@ -100,7 +103,7 @@ import os
     # yolo tabanlı computer vision modellerini kullanmak için
     # pip install ultralytics
 
-
+# ---------------------------------------------------------------------------------------------
 #  yolo ya çevirmeyi test ediyoruz burda
 
 # x, y, w, h = yoloToPixelBox(
@@ -113,7 +116,7 @@ import os
 # )
 
 # print(x, y, w, h)
-
+# ---------------------------------------------------------------------------------------------
 # className = {
 #     0: "arac",
 #     1: "insan"
@@ -139,7 +142,7 @@ import os
 
 #     goruntuGoster(image)
 
-
+# ---------------------------------------------------------------------------------------------
 # classNames = {
 #     0: "araba",
 #     1: "insan"
@@ -174,7 +177,7 @@ import os
 
 #     goruntuGoster(image, imagePath)
 
-
+# ---------------------------------------------------------------------------------------------
     # yolo detect train model=yolov8n.pt data=data.yaml epochs=5 bunla direkt eğitime başlıyoruz
     # clı command line interface i var ultralytics / yolo framework için
 
@@ -190,7 +193,7 @@ import os
 
 #     goruntuGoster(image, "Fine-tuned YOLO Detection")
 
-
+# ---------------------------------------------------------------------------------------------
 # şimdi burda birden fazla val içinde kontolr edicez sonra da bunları output içine kaydedicez
 
 # imagePaths = imageDosyalariGetir("dataset/images/val")
@@ -206,27 +209,37 @@ import os
 
 #     goruntuGoster(image)
 
-
+# ---------------------------------------------------------------------------------------------
 # output a kaydetme kısmı burası
 
-outputFolder = "outputs"
-# exist_ok=True klasor varsa hata verme devam
-os.makedirs(outputFolder, exist_ok=True)
+# outputFolder = "outputs"
+# # exist_ok=True klasor varsa hata verme devam
+# os.makedirs(outputFolder, exist_ok=True)
 
-imagePaths = imageDosyalariGetir("dataset/images/val")
+# imagePaths = imageDosyalariGetir("dataset/images/val")
 
-for imagePath in imagePaths[40:50]:
-    image = goruntuOku(imagePath)
+# for imagePath in imagePaths[40:50]:
+#     image = goruntuOku(imagePath)
 
-    if image is None:
-        continue
+#     if image is None:
+#         continue
 
-    detections = yoloDetectionUret(image)
-    image = detectionCiz(image, detections)
-    # burası en sağdaki adı alır resim.jpg gibi
-    fileName = os.path.basename(imagePath)
-    savePath = os.path.join(outputFolder, fileName)
+#     detections = yoloDetectionUret(image)
+#     image = detectionCiz(image, detections)
+#     # burası en sağdaki adı alır resim.jpg gibi
+#     fileName = os.path.basename(imagePath)
+#     savePath = os.path.join(outputFolder, fileName)
 
-    goruntuKaydet(image, savePath)
+#     goruntuKaydet(image, savePath)
 
-print("Tahmin sonuclari outputs klasorune kaydedildi.")
+# print("Tahmin sonuclari outputs klasorune kaydedildi.")
+
+# ---------------------------------------------------------------------------------------------
+#  burda real time kamera ile gözlem yapıyoruz
+
+# kameraIleRealTimeDetection()
+
+# ---------------------------------------------------------------------------------------------
+#  burda da video ile detection deniyoruz
+
+videoIleDetection("video.mp4")
