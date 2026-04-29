@@ -1,18 +1,11 @@
 from utils.drawUtils import kutuCiz
 from utils.boxUtils import nmsUygula
 from ultralytics import YOLO
+import cv2
 
-model = YOLO("runs/detect/visdroneYolov8n50/weights/best.pt")
+model = YOLO("runs/detect/visdroneYolov8n50-2/weights/best.pt")
 
-# def sahteDetectionUret():
-#     return [
-#         (100, 100, 200, 150, "Arac", 0.92),
-#         (110, 110, 195, 145, "Arac", 0.88),
-#         (350, 120, 120, 180, "Insan", 0.81),
-#         (500, 300, 180, 120, "Arac", 0.76)
-#     ]
-
-def yoloDetectionUret(image):
+def yoloDetectionUret(image, confidenceThreshold=0.5, allowedLabels=None):
     results = model(image)
 
     detections = []
@@ -31,7 +24,13 @@ def yoloDetectionUret(image):
             #  bulnana nesenenin class ını aldık burda 
             cls = int(box.cls[0])
             #  sınıf numarasını isme çevirdik burda da
+            if conf < confidenceThreshold:
+                continue
+
             label = model.names[cls]
+
+            if allowedLabels is not None and label not in allowedLabels:
+                continue
 
             w = x2 - x1
             h = y2 - y1
@@ -50,3 +49,53 @@ def detectionCiz(image, detections):
         image = kutuCiz(image, x, y, w, h, label, confidence)
 
     return image
+
+
+
+def sinifSayilariniCiz(frame, detections, baslangicY=120):
+    sinifSayilari = {}
+
+    for detection in detections:
+        label = detection[4]
+
+        if label not in sinifSayilari:
+            sinifSayilari[label] = 0
+
+        sinifSayilari[label] += 1
+
+    yKonum = baslangicY
+
+    for label, sayi in sinifSayilari.items():
+        cv2.putText(
+            frame,
+            f"{label}: {sayi}",
+            (20, yKonum),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.8,
+            (0, 255, 0),
+            2
+        )
+
+        yKonum += 30
+
+    return frame
+
+# Tracking için bu kısım
+
+def merkezNoktasiHesapla(detection):
+    x, y, w, h = detection[:4]
+    # // aşağıya yuvarlayarak böl
+    merkezX = x + w // 2
+    merkezY = y + h // 2
+
+    return merkezX, merkezY
+
+
+def merkezNoktalariniCiz(frame, detections):
+    for detection in detections:
+        merkezX, merkezY = merkezNoktasiHesapla(detection)
+
+        # görüntü üzerine daire çiziyor yar 
+        cv2.circle(frame, (merkezX, merkezY), 4, (0, 0, 255), -1)
+
+    return frame

@@ -1,6 +1,7 @@
 import cv2
-from detectionPipeline import yoloDetectionUret, detectionCiz 
+from detectionPipeline import yoloDetectionUret, detectionCiz, sinifSayilariniCiz, merkezNoktalariniCiz
 import time
+from centroidTracker import CentroidTracker
 # video kaynağı oluşturuyor burası VideoCapture 0 yazınca da pc kamerasını açıyor
 # kamera objesi oluşturduk cap ile
 def kameraIleRealTimeDetection():
@@ -13,6 +14,8 @@ def kameraIleRealTimeDetection():
         exit()
     oncekiZaman = time.time()
 
+    tracker = CentroidTracker()
+
     while True:
         # kamera objesi okunuyor burda
         # ret frame başarıyla alındı mı onu tutuyor boolean 
@@ -23,9 +26,36 @@ def kameraIleRealTimeDetection():
             print("Frame okunamadi")
             break
         # frame ile modele veriyoruz kutuları alıyoruz
-        detections = yoloDetectionUret(frame)
+        allowedLabels = ["person", "car", "bus", "truck", "bicycle"]
+        detections = yoloDetectionUret(frame, confidenceThreshold=0.5, allowedLabels=allowedLabels)
+
+        # buraya da centroid tracker koyuyoruz
+
+        trackedObjects = tracker.update(detections)
+        print(trackedObjects)
+
         # sonra o frame çizim yapıyoruz
         frame = detectionCiz(frame, detections)
+
+        frame = sinifSayilariniCiz(frame, detections, baslangicY=120)
+
+        # burda merkezleri çiziyoruz
+        frame = merkezNoktalariniCiz(frame, detections)
+        
+        # # toplam nesne sayısnı ekrana basıyoruz
+        # nesneSayisi = len(detections)
+
+        # cv2.putText(
+        #     frame,
+        #     f"Nesne sayisi: {nesneSayisi}",
+        #     (20, 80),
+        #     cv2.FONT_HERSHEY_SIMPLEX,
+        #     1,
+        #     (0, 255, 0),
+        #     2
+        # )
+
+
         simdikiZaman = time.time()
         fps = 1 / (simdikiZaman - oncekiZaman)
         oncekiZaman = simdikiZaman

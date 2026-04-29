@@ -239,7 +239,10 @@ from videoDetection import videoIleDetection
 
 # kameraIleRealTimeDetection()
 
+#  tekrar train için
+#  yolo detect train model=runs/detect/visdroneYolov8n50/weights/best.pt data=data.yaml epochs=30 imgsz=640 batch=8 name=visdroneYolov8n50-2
 # ---------------------------------------------------------------------------------------------
 #  burda da video ile detection deniyoruz
+
 
 videoIleDetection("video.mp4")
