@@ -1,5 +1,5 @@
 import cv2
-from detectionPipeline import yoloDetectionUret, detectionCiz, sinifSayilariniCiz, merkezNoktalariniCiz
+from detectionPipeline import yoloDetectionUret, detectionCiz, sinifSayilariniCiz, merkezNoktalariniCiz, trackedObjectsCiz
 import time
 from centroidTracker import CentroidTracker
 
@@ -14,7 +14,7 @@ def videoIleDetection(videoYolu):
     # o anki zamanı aldık burda
     oncekiZaman = time.time()
 
-    tracker = CentroidTracker()
+    tracker = CentroidTracker(maxDistance=80, maxMissingFrame=10)
 
     while True:
         ret, frame = cap.read()
@@ -29,8 +29,9 @@ def videoIleDetection(videoYolu):
         # buraya da centroid tracker koyuyoruz
 
         trackedObjects = tracker.update(detections)
-        print(trackedObjects)
+        # print(trackedObjects)
         frame = detectionCiz(frame, detections)
+        frame = trackedObjectsCiz(frame, trackedObjects)
         frame = sinifSayilariniCiz(frame, detections, baslangicY=120)
         
         # burası merkez çizme

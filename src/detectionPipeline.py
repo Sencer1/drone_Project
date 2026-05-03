@@ -99,3 +99,23 @@ def merkezNoktalariniCiz(frame, detections):
         cv2.circle(frame, (merkezX, merkezY), 4, (0, 0, 255), -1)
 
     return frame
+
+def trackedObjectsCiz(frame, trackedObjects):
+    # .items() dic içindeki hem anahtaralrı döner hem de value ları
+    for objectId, data in trackedObjects.items():
+        centerX, centerY, detection = data
+        x, y, w, h, label, confidence = detection
+
+        cv2.putText(
+            frame,
+            f"ID{objectId}",
+            (x, y - 30),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.6,
+            (0,0,255),
+            2
+        )
+        # -1 değerri daireyi doldurur 
+        cv2.circle(frame, (centerX, centerY), 4, (0, 0, 255), -1)
+
+    return frame

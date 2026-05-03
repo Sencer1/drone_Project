@@ -1,5 +1,5 @@
 import cv2
-from detectionPipeline import yoloDetectionUret, detectionCiz, sinifSayilariniCiz, merkezNoktalariniCiz
+from detectionPipeline import yoloDetectionUret, detectionCiz, sinifSayilariniCiz, merkezNoktalariniCiz, trackedObjectsCiz
 import time
 from centroidTracker import CentroidTracker
 # video kaynağı oluşturuyor burası VideoCapture 0 yazınca da pc kamerasını açıyor
@@ -14,7 +14,8 @@ def kameraIleRealTimeDetection():
         exit()
     oncekiZaman = time.time()
 
-    tracker = CentroidTracker()
+    tracker = CentroidTracker(maxDistance=80, maxMissingFrame=10)
+
 
     while True:
         # kamera objesi okunuyor burda
@@ -32,11 +33,11 @@ def kameraIleRealTimeDetection():
         # buraya da centroid tracker koyuyoruz
 
         trackedObjects = tracker.update(detections)
-        print(trackedObjects)
+        # print(trackedObjects)
 
         # sonra o frame çizim yapıyoruz
         frame = detectionCiz(frame, detections)
-
+        frame = trackedObjectsCiz(frame, trackedObjects)
         frame = sinifSayilariniCiz(frame, detections, baslangicY=120)
 
         # burda merkezleri çiziyoruz
